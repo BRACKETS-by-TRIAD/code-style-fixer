@@ -21,8 +21,8 @@ function main {
                 cgHooks add --ignore-lock
                 ;;
             install)
-                instalPhpCsFixer
-                instalCgHooks
+                installPhpCsFixer
+                installCgHooks
                 ;;
 
             # Get version
