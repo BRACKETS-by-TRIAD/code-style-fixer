@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# This is just the mini harbor for test and composer update
+
+VERSION=1.0.0
+
+export DOCKER_PHP_VERSION=${DOCKER_PHP_VERSION:-7.2}
+# create base docker-compose command to run
+DOCKER="docker run -it --rm -v "$(PWD)":/var/www/html:delegated -v "$(PWD)/docker/php/ssh":/root/.ssh:delegated brackets/php:"${DOCKER_PHP_VERSION}
+
+if [[ $# -gt 0 ]]; then
+    case "$1" in
+
+        # If "composer" or "comp" is used, pass to "composer" inside a container
+        composer|comp)
+            shift 1
+            ${DOCKER} composer "$@"
+            ;;
+
+        # If "test" is used, run unit tests, pass any extra arguments to phpunit
+        test)
+            shift 1
+            ${DOCKER} ./vendor/bin/phpunit "$@"
+            ;;
+
+        # Get version
+        -v|--version)
+            echo ${VERSION}
+            ;;
+
+        # Else, pass args to docker-compose
+        *)
+            docker "$@"
+            ;;
+
+    esac
+else
+    # Use the docker-compose ps command if nothing else passed through
+    docker ps
+fi

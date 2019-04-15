@@ -1,0 +1,39 @@
+{
+    "name": "brackets/code-style-fixer",
+    "description": "Fixing php code style",
+    "type": "library",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "keywords": [
+        "git",
+        "composer"
+    ],
+    "authors": [
+        {
+            "name": "David Behal",
+            "email": "david.behal@brackets.sk"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "symfony/console": "^3.2 || ^4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0",
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "brainmaestro/composer-git-hooks": "^2.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Brackets\\CodeStyleFixer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Brackets\\CodeStyleFixer\\Tests\\": "tests/"
+        }
+    },
+    "bin": [
+        "code-style-fixer"
+    ]
+}
