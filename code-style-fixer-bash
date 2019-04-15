@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+VERSION=1.0.0
+
+function main {
+    if [[ -f .env ]]; then
+        source .env
+    fi
+    if [[ $# -gt 0 ]]; then
+        case "$1" in
+            pre-commit)
+                phpCsFixer
+                ;;
+            pre-push)
+                phpCsFixer --dry-run
+                ;;
+            update)
+                cgHooks update
+                ;;
+            add)
+                cgHooks add --ignore-lock
+                ;;
+
+            # Get version
+            -v|--version)
+                echo ${VERSION}
+                ;;
+        esac
+    fi
+}
+
+function phpCsFixer {
+    if [[ ! -f ./vendor/bin/php-cs-fixer ]]; then
+        echo "php-cs-fixer bin not found in ./vendor/bin. Please use composer require --dev friendsofphp/php-cs-fixer"
+        exit 0
+    fi
+    command -v docker >/dev/null 2>&1
+    if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]]; then
+#            echo "Docker is installed, running php-cs-fixer in docker"
+            PSRESULT="$(docker-compose ps -q)"
+            if [[ ! -z "$PSRESULT" ]]; then
+                ./harbor exec -T php ./vendor/bin/php-cs-fixer fix "$@"
+            else
+                ./harbor run --rm php ./vendor/bin/php-cs-fixer fix "$@"
+            fi
+    else
+#            echo "Docker is not installed, continue with local php-cs-fixer"
+            ./vendor/bin/php-cs-fixer fix "$@"
+    fi
+}
+
+function cgHooks {
+    if [[ ! -f ./vendor/bin/cghooks ]]; then
+        echo "cghooks bin not found in ./vendor/bin. Please use composer require --dev brainmaestro/composer-git-hooks"
+        exit 0
+    fi
+    command -v docker >/dev/null 2>&1
+    if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]]; then
+#            echo "Docker is installed, running cghooks in docker"
+            # is the environment running
+            PSRESULT="$(docker-compose ps -q)"
+            if [[ ! -z "$PSRESULT" ]]; then
+                ./harbor exec -T php ./vendor/bin/cghooks "$@"
+            else
+                ./harbor run --rm php ./vendor/bin/cghooks "$@"
+            fi
+    else
+#            echo "Docker is not installed, continue with local php-cs-fixer"
+            ./vendor/bin/cghooks "$@"
+    fi
+}
+
+main "$@"

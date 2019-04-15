@@ -34,6 +34,7 @@
         }
     },
     "bin": [
-        "code-style-fixer"
+        "code-style-fixer",
+        "code-style-fixer-bash"
     ]
 }

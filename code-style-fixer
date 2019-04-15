@@ -1,126 +1,37 @@
-#!/usr/bin/env bash
+#!/usr/bin/env php
+<?php
 
-VERSION=1.0.0
-
-function main {
-    if [[ -f .env ]]; then
-        source .env
-    fi
-    if [[ $# -gt 0 ]]; then
-        case "$1" in
-            pre-commit)
-                phpCsFixer
-                ;;
-            pre-push)
-                phpCsFixer --dry-run
-                ;;
-            update)
-                cgHooks update
-                ;;
-            add)
-                cgHooks add --ignore-lock
-                ;;
-            install)
-                installPhpCsFixer
-                installCgHooks
-                ;;
-
-            # Get version
-            -v|--version)
-                echo ${VERSION}
-                ;;
-        esac
-    fi
+$dir = getcwd();
+if (is_file($autoload = __DIR__ . '/vendor/autoload.php')) {
+    require_once $autoload;
+} elseif (is_file($autoload = __DIR__ . '/../../autoload.php')) {
+    require_once $autoload;
+} else {
+    fwrite(STDERR,
+        'You must set up the project dependencies, run the following commands:' . PHP_EOL .
+        'curl -s http://getcomposer.org/installer | php' . PHP_EOL .
+        'php composer.phar install' . PHP_EOL
+    );
+    exit(1);
 }
 
-function installPhpCsFixer {
-    command -v docker >/dev/null 2>&1
-    if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]]; then
-            ./harbor composer require --dev friendsofphp/php-cs-fixer
-    else
-            composer require --dev friendsofphp/php-cs-fixer
-    fi
-    echo '.php_cs.cache' >> .gitignore
+use BrainMaestro\GitHooks\Hook;
+use BrainMaestro\GitHooks\Commands\AddCommand;
+use BrainMaestro\GitHooks\Commands\UpdateCommand;
+use BrainMaestro\GitHooks\Commands\RemoveCommand;
+use BrainMaestro\GitHooks\Commands\ListCommand;
+use BrainMaestro\GitHooks\Commands\HookCommand;
+use Symfony\Component\Console\Application;
+
+$application = new Application('Code Style Fixer', '1.0.0');
+
+$application->add(new AddCommand());
+$application->add(new UpdateCommand());
+$application->add(new RemoveCommand());
+$application->add(new ListCommand());
+
+foreach (Hook::getValidHooks($dir) as $hook => $script) {
+    $application->add(new HookCommand($hook, $script));
 }
 
-function phpCsFixer {
-    if [[ ! -f ./vendor/bin/php-cs-fixer ]]; then
-        echo "php-cs-fixer bin not found in ./vendor/bin. Please use composer require --dev friendsofphp/php-cs-fixer"
-        exit 0
-    fi
-    command -v docker >/dev/null 2>&1
-    if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]]; then
-#            echo "Docker is installed, running php-cs-fixer in docker"
-            PSRESULT="$(docker-compose ps -q)"
-            if [[ ! -z "$PSRESULT" ]]; then
-                ./harbor exec -T php ./vendor/bin/php-cs-fixer fix "$@"
-            else
-                ./harbor run --rm php ./vendor/bin/php-cs-fixer fix "$@"
-            fi
-    else
-#            echo "Docker is not installed, continue with local php-cs-fixer"
-            ./vendor/bin/php-cs-fixer fix "$@"
-    fi
-}
-
-function installCgHooks {
-    command -v docker >/dev/null 2>&1
-    if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]]; then
-            ./harbor composer require --dev brainmaestro/composer-git-hooks
-    else
-            composer require --dev brainmaestro/composer-git-hooks
-    fi
-    setGitHooksInEnv .env.example
-    setGitHooksInEnv .env
-    echo 'cghooks.lock' >> .gitignore
-}
-
-function cgHooks {
-    if [[ ! -f ./vendor/bin/cghooks ]]; then
-        echo "cghooks bin not found in ./vendor/bin. Please use composer require --dev brainmaestro/composer-git-hooks"
-        exit 0
-    fi
-    command -v docker >/dev/null 2>&1
-    if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]]; then
-#            echo "Docker is installed, running cghooks in docker"
-            # is the environment running
-            PSRESULT="$(docker-compose ps -q)"
-            if [[ ! -z "$PSRESULT" ]]; then
-                ./harbor exec -T php ./vendor/bin/cghooks "$@"
-            else
-                ./harbor run --rm php ./vendor/bin/cghooks "$@"
-            fi
-    else
-#            echo "Docker is not installed, continue with local php-cs-fixer"
-            ./vendor/bin/cghooks "$@"
-    fi
-}
-
-function setGitHooksInEnv {
-
-    if [[ ! ".env" == "$1" ]] && [[ ! ".env.example" == "$1" ]]; then
-        return
-    fi
-
-    # source actual env values
-    if [[ ".env" == "$1" ]]; then
-        source .env
-    fi
-
-    echo "Adding values to $1 ..."
-    # add or modify values in .env/.env.example
-    if grep -Fxq "#git-hooks" $1; then
-        echo "Git hooks config already in .env.example"
-    else
-        echo -e "" >> $1
-        echo -e "#git-hooks" >> $1
-    fi
-
-    if grep -Fxq "GIT_HOOKS_IGNORE_DOCKER" $1; then
-        ${SEDCMD} "s/GIT_HOOKS_IGNORE_DOCKER=.*/GIT_HOOKS_IGNORE_DOCKER=false" $1
-    else
-        echo -e "GIT_HOOKS_IGNORE_DOCKER=false" >> $1
-    fi
-}
-
-main "$@"
+$application->run();
