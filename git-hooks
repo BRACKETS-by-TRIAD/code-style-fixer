@@ -117,7 +117,7 @@ function setGitHooksInEnv {
     fi
 
     if grep -Fxq "GIT_HOOKS_IGNORE_DOCKER" $1; then
-        ${SEDCMD} "s/GIT_HOOKS_IGNORE_DOCKER=.*/GIT_HOOKS_IGNORE_DOCKER=false $1
+        ${SEDCMD} "s/GIT_HOOKS_IGNORE_DOCKER=.*/GIT_HOOKS_IGNORE_DOCKER=false" $1
     else
         echo -e "GIT_HOOKS_IGNORE_DOCKER=false" >> $1
     fi
