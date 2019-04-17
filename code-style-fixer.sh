@@ -21,6 +21,12 @@ function main {
             git-hooks-update)
                 cgHooks update
                 ;;
+            git-hooks-remove)
+                cgHooks remove
+                ;;
+            git-hooks-list)
+                cgHooks list
+                ;;
             install)
                 codeStyleFixer install
                 ;;
