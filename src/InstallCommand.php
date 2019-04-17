@@ -51,7 +51,7 @@ class InstallCommand extends Command
         });
 
         $this->appendIfNotExist('.gitignore', '.php_cs.cache', "\n\n.php_cs.cache");
-        $this->appendIfNotExist('.gitignore', 'cghooks.lock', "\ncghooks.lock");
+        $this->appendIfNotExist('.gitignore', 'cghooks.lock', "\n\ncghooks.lock");
 
         $this->appendIfNotExist('.env', '#git-hooks', "\n#git-hooks");
         $this->appendIfNotExist('.env', 'GIT_HOOKS_IGNORE_DOCKER', "\nGIT_HOOKS_IGNORE_DOCKER=false");
