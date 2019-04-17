@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
 VERSION=1.0.0
+PHP=php
 
 function main {
     if [[ -f .env ]]; then
         source .env
     fi
+    getPhp
     if [[ $# -gt 0 ]]; then
         case "$1" in
             pre-commit)
@@ -19,6 +21,9 @@ function main {
                 ;;
             add)
                 cgHooks add --ignore-lock
+                ;;
+            install)
+                codeStyleFixer install
                 ;;
 
             # Get version
@@ -34,19 +39,7 @@ function phpCsFixer {
         echo "php-cs-fixer bin not found in ./vendor/bin. Please use composer require --dev friendsofphp/php-cs-fixer"
         exit 0
     fi
-    command -v docker >/dev/null 2>&1
-    if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]]; then
-#            echo "Docker is installed, running php-cs-fixer in docker"
-            PSRESULT="$(docker-compose ps -q)"
-            if [[ ! -z "$PSRESULT" ]]; then
-                ./harbor exec -T php ./vendor/bin/php-cs-fixer fix "$@"
-            else
-                ./harbor run --rm php ./vendor/bin/php-cs-fixer fix "$@"
-            fi
-    else
-#            echo "Docker is not installed, continue with local php-cs-fixer"
-            ./vendor/bin/php-cs-fixer fix "$@"
-    fi
+    ${PHP} ./vendor/bin/php-cs-fixer fix "$@"
 }
 
 function cgHooks {
@@ -54,19 +47,26 @@ function cgHooks {
         echo "cghooks bin not found in ./vendor/bin. Please use composer require --dev brainmaestro/composer-git-hooks"
         exit 0
     fi
+    ${PHP}  ./vendor/bin/cghooks "$@"
+}
+
+function codeStyleFixer {
+    if [[ ! -f ./vendor/bin/code-style-fixer ]]; then
+        echo "code-style-fixer bin not found in ./vendor/bin. Please use composer require --dev brackets/code-style-fixer"
+        exit 0
+    fi
+    ${PHP}  ./vendor/bin/code-style-fixer "$@"
+}
+
+function getPhp {
     command -v docker >/dev/null 2>&1
-    if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]]; then
-#            echo "Docker is installed, running cghooks in docker"
-            # is the environment running
+    if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]] && [[ -f harbor ]]; then
             PSRESULT="$(docker-compose ps -q)"
             if [[ ! -z "$PSRESULT" ]]; then
-                ./harbor exec -T php ./vendor/bin/cghooks "$@"
+                PHP="./harbor exec -T php"
             else
-                ./harbor run --rm php ./vendor/bin/cghooks "$@"
+                PHP="./harbor run --rm php"
             fi
-    else
-#            echo "Docker is not installed, continue with local php-cs-fixer"
-            ./vendor/bin/cghooks "$@"
     fi
 }
 
