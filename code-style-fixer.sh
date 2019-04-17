@@ -19,13 +19,16 @@ function main {
                 cgHooks add --ignore-lock
                 ;;
             git-hooks-update)
-                cgHooks update
+                shift 1
+                cgHooks update "$@"
                 ;;
             git-hooks-remove)
-                cgHooks remove
+                shift 1
+                cgHooks remove "$@"
                 ;;
             git-hooks-list)
-                cgHooks list
+                shift 1
+                cgHooks list "$@"
                 ;;
             install)
                 codeStyleFixer install
