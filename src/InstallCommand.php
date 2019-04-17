@@ -32,8 +32,6 @@ class InstallCommand extends Command
     {
         $composer = $this->findComposer();
 
-        $artisan = $this->findArtisan();
-
         $commands = [];
 
         $commands[] = $composer . ' config extra.hooks.pre-commit "./vendor/bin/code-style-fixer.sh pre-commit"';
@@ -71,10 +69,10 @@ class InstallCommand extends Command
      */
     protected function appendIfNotExist(string $filePath, string $search, string $append = null): void
     {
-        if(file_exists($filePath)) {
+        if (file_exists($filePath)) {
             $str = file_get_contents($filePath);
             if (strpos($str, $search) === false) {
-                if($append === null) {
+                if ($append === null) {
                     $append = $search;
                 }
                 $str .= $append;
@@ -100,31 +98,12 @@ class InstallCommand extends Command
      *
      * @return string
      */
-    protected function findComposer()
+    protected function findComposer(): string
     {
-
-        if (file_exists(getcwd() . '/harbor')) {
-            return './harbor composer';
-        }
-
         if (file_exists(getcwd() . '/composer.phar')) {
             return '"' . PHP_BINARY . '" composer.phar';
         }
 
         return 'composer';
-    }
-
-    /**
-     * Get the artisan command for the environment.
-     *
-     * @return string
-     */
-    protected function findArtisan()
-    {
-        if (file_exists(getcwd() . '/harbor')) {
-            return './harbor artisan';
-        }
-
-        return 'php artisan';
     }
 }
