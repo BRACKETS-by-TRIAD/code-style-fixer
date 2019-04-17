@@ -82,18 +82,6 @@ class InstallCommand extends Command
     }
 
     /**
-     * @param string $filePath
-     * @param string $original
-     * @param string $replacement
-     */
-    protected function stringReplace(string $filePath, string $original, string $replacement): void
-    {
-        $str = file_get_contents($filePath);
-        $str = str_replace($original, $replacement, $str);
-        file_put_contents($filePath, $str);
-    }
-
-    /**
      * Get the composer command for the environment.
      *
      * @return string
