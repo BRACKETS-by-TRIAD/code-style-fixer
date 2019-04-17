@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 VERSION=1.0.0
-PHP=php
 
 function main {
     if [[ -f .env ]]; then
@@ -16,11 +15,11 @@ function main {
             pre-push)
                 phpCsFixer --dry-run
                 ;;
-            update)
-                cgHooks update
-                ;;
-            add)
+            git-hooks-add)
                 cgHooks add --ignore-lock
+                ;;
+            git-hooks-update)
+                cgHooks update
                 ;;
             install)
                 codeStyleFixer install
@@ -59,14 +58,12 @@ function codeStyleFixer {
 }
 
 function getPhp {
+    PHP=php
+    export DOCKER_PHP_VERSION=${DOCKER_PHP_VERSION:-7.2}
+    DOCKER="docker run -it --rm -v "$(PWD)":/var/www/html:delegated -v "$(PWD)/docker/php/ssh":/root/.ssh:delegated brackets/php:"${DOCKER_PHP_VERSION}
     command -v docker >/dev/null 2>&1
-    if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]] && [[ -f harbor ]]; then
-            PSRESULT="$(docker-compose ps -q)"
-            if [[ ! -z "$PSRESULT" ]]; then
-                PHP="./harbor exec -T php"
-            else
-                PHP="./harbor run --rm php"
-            fi
+    if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]]; then
+        PHP=${DOCKER}
     fi
 }
 

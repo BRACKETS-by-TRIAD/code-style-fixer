@@ -4,9 +4,9 @@ This repository is the source for Php Cs Fixer installation to your project.
 
 First you need to add this file to your project, run: 
 
-Install CgHooks and Php-cs-fixer
+Install Code Style Fixer
 ```
-./git-hooks install
+./vendor/bin/code-style-fixer.sh install
 ```
 
 Add hooks to extra section of composer json:  
@@ -15,10 +15,10 @@ Add hooks to extra section of composer json:
     ...
     "hooks": {
         "pre-commit": [
-            "./git-hooks pre-commit"
+            "./vendor/bin/code-style-fixer.sh pre-commit"
         ],
         "pre-push": [
-            "./git-hooks pre-push"
+            "./vendor/bin/code-style-fixer.sh pre-push"
         ]
     }
 }
@@ -29,10 +29,10 @@ Add scripts to composer json:
 "scripts": {
     ...
     "post-install-cmd": [
-        "./git-hooks add"
+        "./vendor/bin/code-style-fixer.sh git-hooks-add"
     ],
     "post-update-cmd": [
-        "./git-hooks update"
+        "./vendor/bin/code-style-fixer.sh git-hooks-update"
     ]
 }
 ```
