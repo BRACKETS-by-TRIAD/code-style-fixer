@@ -59,10 +59,10 @@ function codeStyleFixer {
 
 function getPhp {
     PHP=php
-    export DOCKER_PHP_VERSION=${DOCKER_PHP_VERSION:-7.2}
-    DOCKER="docker run -it --rm -v "$(PWD)":/var/www/html:delegated -v "$(PWD)/docker/php/ssh":/root/.ssh:delegated brackets/php:"${DOCKER_PHP_VERSION}
     command -v docker >/dev/null 2>&1
     if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]]; then
+        export DOCKER_PHP_VERSION=${DOCKER_PHP_VERSION:-7.2}
+        DOCKER="docker run -it --rm -v "$(PWD)":/var/www/html:delegated -v "$(PWD)/docker/php/ssh":/root/.ssh:delegated brackets/php:"${DOCKER_PHP_VERSION}
         PHP=${DOCKER}
     fi
 }
