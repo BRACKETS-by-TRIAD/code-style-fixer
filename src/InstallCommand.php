@@ -59,7 +59,7 @@ class InstallCommand extends Command
         $this->appendIfNotExist('.env.example', '#git-hooks', "\n#git-hooks");
         $this->appendIfNotExist('.env.example', 'GIT_HOOKS_IGNORE_DOCKER', "\nGIT_HOOKS_IGNORE_DOCKER=false");
 
-        copy(__DIR__ . '/../.php_cs', __DIR__ . '/../../../../');
+        copy(__DIR__ . '/../.php_cs', __DIR__ . '/../../../../.php_cs');
 
         $output->writeln('<comment>Code Style Fixer successfully installed.</comment>');
     }
