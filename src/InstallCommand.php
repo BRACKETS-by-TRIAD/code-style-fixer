@@ -40,6 +40,9 @@ class InstallCommand extends Command
 
         $commands[] = './vendor/bin/code-style-fixer.sh git-hooks-add';
 
+        $this->appendIfNotExist('.gitignore', '.php_cs.cache', PHP_EOL.'.php_cs.cache');
+        $this->appendIfNotExist('.gitignore', 'cghooks.lock', PHP_EOL.'cghooks.lock');
+
         $process = Process::fromShellCommandline(implode(' && ', $commands), null, null, null, null);
 
         if ('\\' !== DIRECTORY_SEPARATOR && file_exists('/dev/tty') && is_readable('/dev/tty')) {
@@ -49,9 +52,6 @@ class InstallCommand extends Command
         $process->run(function ($type, $line) use ($output) {
             $output->write($line);
         });
-
-        $this->appendIfNotExist('.gitignore', '.php_cs.cache', "\n\n.php_cs.cache");
-        $this->appendIfNotExist('.gitignore', 'cghooks.lock', "\n\ncghooks.lock");
 
         $this->appendIfNotExist('.env', '#git-hooks', "\n#git-hooks");
         $this->appendIfNotExist('.env', 'GIT_HOOKS_IGNORE_DOCKER', "\nGIT_HOOKS_IGNORE_DOCKER=false");
