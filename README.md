@@ -30,7 +30,7 @@ This commands are just wrapper for brainmaestro/composer-git-hooks package, so s
 
 ### Php Cs Fixer
 
-To manually run phpCsFixer script use: 
+To manually run phpCsFixer script use
 
 ```
 ./vendor/bin/code-style-fixer.sh fix
