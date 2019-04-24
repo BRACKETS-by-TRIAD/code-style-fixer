@@ -8,6 +8,22 @@ First you need to require this composer package:
 composer require --dev brackets/code-style-fixer
 ```
 
+Next you have to add this to script section of `composer.json`
+
+```
+"scripts": {
+    ...
+    "post-install-cmd": [
+        ...
+        "[ $COMPOSER_DEV_MODE -eq 0 ] || ./vendor/bin/code-style-fixer.sh git-hooks-add --ignore-lock"
+    ],
+    "post-update-cmd": [
+        ...
+        "[ $COMPOSER_DEV_MODE -eq 0 ] || ./vendor/bin/code-style-fixer.sh git-hooks-update"
+    ]
+}
+```
+
 And then you have to install the package
 
 ```
