@@ -15,6 +15,9 @@ function main {
             pre-push)
                 phpCsFixer --dry-run
                 ;;
+            fix)
+                phpCsFixer "$@"
+                ;;
             git-hooks-add)
                 cgHooks add --ignore-lock
                 ;;
