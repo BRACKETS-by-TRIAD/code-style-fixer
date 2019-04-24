@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "af0054d7faec358ca67e1ff3f30e3d5a",
+    "content-hash": "740b463eef0774065959f38c3aae603d",
     "packages": [
         {
             "name": "brainmaestro/composer-git-hooks",
@@ -738,7 +738,7 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v4.2.5",
+            "version": "v4.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",

@@ -5,6 +5,8 @@ namespace Brackets\CodeStyleFixer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
 class InstallCommand extends Command
@@ -40,8 +42,8 @@ class InstallCommand extends Command
 
         $commands[] = './vendor/bin/code-style-fixer.sh git-hooks-add';
 
-        $this->appendIfNotExist('.gitignore', '.php_cs.cache', PHP_EOL.'.php_cs.cache');
-        $this->appendIfNotExist('.gitignore', 'cghooks.lock', PHP_EOL.'cghooks.lock');
+        $this->appendIfNotExist('.gitignore', '.php_cs.cache', PHP_EOL . '.php_cs.cache');
+        $this->appendIfNotExist('.gitignore', 'cghooks.lock', PHP_EOL . 'cghooks.lock');
 
         $process = Process::fromShellCommandline(implode(' && ', $commands), null, null, null, null);
 
@@ -59,7 +61,12 @@ class InstallCommand extends Command
         $this->appendIfNotExist('.env.example', '#git-hooks', "\n#git-hooks");
         $this->appendIfNotExist('.env.example', 'GIT_HOOKS_IGNORE_DOCKER', "\nGIT_HOOKS_IGNORE_DOCKER=false");
 
-        copy(__DIR__ . '/../.php_cs', __DIR__ . '/../../../../.php_cs');
+        $filesystem = new Filesystem();
+        try {
+            $filesystem->copy(__DIR__ . '/../.php_cs', __DIR__ . '/../../../../.php_cs');
+        } catch (IOExceptionInterface $exception) {
+            $output->writeln('An error occurred while copying .php_cs file.');
+        }
 
         $output->writeln('<comment>Code Style Fixer successfully installed.</comment>');
     }
