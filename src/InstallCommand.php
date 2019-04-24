@@ -45,7 +45,11 @@ class InstallCommand extends Command
         $this->appendIfNotExist('.gitignore', '.php_cs.cache', PHP_EOL . '.php_cs.cache');
         $this->appendIfNotExist('.gitignore', 'cghooks.lock', PHP_EOL . 'cghooks.lock');
 
-        $process = Process::fromShellCommandline(implode(' && ', $commands), null, null, null, null);
+        if (method_exists(Process::class, 'fromShellCommandline')) {
+            $process = Process::fromShellCommandline(implode(' && ', $commands), null, null, null, null);
+        } else {
+            $process = new Process(implode(' && ', $commands), null, null, null, null);
+        }
 
         if ('\\' !== DIRECTORY_SEPARATOR && file_exists('/dev/tty') && is_readable('/dev/tty')) {
             $process->setTty(true);
