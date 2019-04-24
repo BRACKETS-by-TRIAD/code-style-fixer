@@ -36,9 +36,9 @@ class InstallCommand extends Command
 
         $commands = [];
 
-        $commands[] = $composer . ' config extra.hooks.pre-commit "[./vendor/bin/code-style-fixer.sh pre-commit]"';
+        $commands[] = $composer . ' config extra.hooks.pre-commit [./vendor/bin/code-style-fixer.sh pre-commit]';
 
-        $commands[] = $composer . ' config extra.hooks.pre-push "[./vendor/bin/code-style-fixer.sh pre-push]"';
+        $commands[] = $composer . ' config extra.hooks.pre-push [./vendor/bin/code-style-fixer.sh pre-push]';
 
         $commands[] = './vendor/bin/code-style-fixer.sh git-hooks-add';
 
