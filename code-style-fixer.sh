@@ -76,9 +76,9 @@ function getPhp {
     if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]]; then
         export DOCKER_PHP_VERSION=${DOCKER_PHP_VERSION:-7.2}
         if [[ $1 == t ]]; then
-            DOCKER="docker run -it --rm -v "$(PWD)":/var/www/html:delegated -v "$(PWD)/docker/php/ssh":/root/.ssh:delegated brackets/php:"${DOCKER_PHP_VERSION}
+            DOCKER="docker run -it --rm -v "${PWD}":/var/www/html:delegated -v "${PWD}/docker/php/ssh":/root/.ssh:delegated brackets/php:"${DOCKER_PHP_VERSION}
         else
-            DOCKER="docker run --rm -v "$(PWD)":/var/www/html:delegated -v "$(PWD)/docker/php/ssh":/root/.ssh:delegated brackets/php:"${DOCKER_PHP_VERSION}
+            DOCKER="docker run --rm -v "${PWD}":/var/www/html:delegated -v "${PWD}/docker/php/ssh":/root/.ssh:delegated brackets/php:"${DOCKER_PHP_VERSION}
         fi
         PHP=${DOCKER}
     fi
