@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION=1.0.3
+VERSION=1.0.4
 
 function main {
     if [[ -f .env ]]; then
@@ -76,23 +76,12 @@ function getPhp {
     command -v docker >/dev/null 2>&1
     if [[ $? -eq 0 ]] && [[ ${GIT_HOOKS_IGNORE_DOCKER} != true ]]; then
         export DOCKER_PHP_VERSION=${DOCKER_PHP_VERSION:-7.2}
-        ENV=""
-
-        # check system
-        UNAMEOUT="$(uname -s)"
-        case "${UNAMEOUT}" in
-            Linux*)     MACHINE=linux;;
-            Darwin*)    MACHINE=mac;;
-            *)          MACHINE="UNKNOWN"
-        esac
-        if [[ "$MACHINE" == linux ]]; then
-            ENV="-e HARBOR_USER_UID=${UID}"
-        fi
+        ENV="-e HARBOR_USER_UID=${UID}"
 
         if [[ $1 == t ]]; then
-            DOCKER="docker run -it --rm -v "${PWD}":/var/www/html:delegated -v "${PWD}/docker/php/ssh":/root/.ssh:delegated ${ENV} brackets/php:"${DOCKER_PHP_VERSION}
+            DOCKER="docker run -it --rm -v "${PWD}":/var/www/html:delegated -v "${PWD}/docker/php/ssh":/root/.ssh:delegated -v "${PWD}/docker/php/ssh":/home/harbor/.ssh:delegated ${ENV} brackets/php:"${DOCKER_PHP_VERSION}
         else
-            DOCKER="docker run --rm -v "${PWD}":/var/www/html:delegated -v "${PWD}/docker/php/ssh":/root/.ssh:delegated ${ENV} brackets/php:"${DOCKER_PHP_VERSION}
+            DOCKER="docker run --rm -v "${PWD}":/var/www/html:delegated -v "${PWD}/docker/php/ssh":/root/.ssh:delegated -v "${PWD}/docker/php/ssh":/home/harbor/.ssh:delegated ${ENV} brackets/php:"${DOCKER_PHP_VERSION}
         fi
         PHP=${DOCKER}
     fi
