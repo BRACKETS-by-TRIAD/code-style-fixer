@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION=1.0.2
+VERSION=1.0.3
 
 function main {
     if [[ -f .env ]]; then
@@ -16,6 +16,7 @@ function main {
                 phpCsFixer --dry-run
                 ;;
             fix)
+                shift 1
                 phpCsFixer "$@"
                 ;;
             git-hooks-add)
