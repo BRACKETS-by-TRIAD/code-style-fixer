@@ -21,3 +21,4 @@ refresh.sh
 .DS_Store
 .php_cs.cache
 cghooks.lock
+composer.lock
