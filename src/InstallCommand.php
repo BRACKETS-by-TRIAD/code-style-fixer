@@ -28,7 +28,7 @@ class InstallCommand extends Command
      *
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -73,6 +73,8 @@ class InstallCommand extends Command
         }
 
         $output->writeln('<comment>Code Style Fixer successfully installed.</comment>');
+
+        return 0;
     }
 
     /**
