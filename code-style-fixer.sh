@@ -79,9 +79,9 @@ function getPhp {
         ENV="-e HARBOR_USER_UID=${UID}"
 
         if [[ $1 == t ]]; then
-            DOCKER="docker run -it --rm -v "${PWD}":/var/www/html:delegated -v "${PWD}/docker/php/ssh":/root/.ssh:delegated -v "${PWD}/docker/php/ssh":/home/harbor/.ssh:delegated ${ENV} brackets/php:"${DOCKER_PHP_VERSION}
+            DOCKER="docker run -it --rm -v "${PWD}":/var/www/html:delegated -v "${PWD}/docker/php/ssh":/root/.ssh:delegated -v "${PWD}/docker/php/ssh":/home/harbor/.ssh:delegated ${ENV} dejwcake/php${DOCKER_PHP_VERSION:-8.0}:latest"
         else
-            DOCKER="docker run --rm -v "${PWD}":/var/www/html:delegated -v "${PWD}/docker/php/ssh":/root/.ssh:delegated -v "${PWD}/docker/php/ssh":/home/harbor/.ssh:delegated ${ENV} brackets/php:"${DOCKER_PHP_VERSION}
+            DOCKER="docker run --rm -v "${PWD}":/var/www/html:delegated -v "${PWD}/docker/php/ssh":/root/.ssh:delegated -v "${PWD}/docker/php/ssh":/home/harbor/.ssh:delegated ${ENV} dejwcake/php${DOCKER_PHP_VERSION:-8.0}:latest"
         fi
         PHP=${DOCKER}
     fi
